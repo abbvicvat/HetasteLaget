@@ -1,2 +1,2 @@
 # HetasteLaget
-bka
+Det här projektet är Temperatur och Luftfuktighetsmätning.
