@@ -18,36 +18,62 @@ hr{ /*en tag i HTML som gör en ruta */
 }
 
 #FlexBoxContainer{
+    margin-bottom: 20px;
     display:flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-evenly;
+    
+    
 }
 .FlexBoxTempItem{
+    display: flex;
+    background-color: #6b6b6b;
     border-style: solid;
     border-color: black;
     height: 300px;
-    width: 160px;
-    padding-left: 80px;
-    padding-right: 80px;
+    width: 19.5%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
 }
 .TempHeading{
+    align-self: center;
+    color: white;
+    justify-content: flex-end;
+    
     
 }
-.but{
+
+.But{
+    transition-duration: 0.4s;
+    border-color: turquoise;
+    background-color: white;
+    font-size: 22px;
+    border-radius: 13px;
+    justify-self: flex-end;
+    align-self: flex-end;
+    margin-bottom: 2%;
+    margin-right: 2%;
+    
+    
+}
+.But:hover{
+    background-color: turquoise;
+    color: white;
+}
+.Temp{
+    color: thistle;
+    font-size: 25px;align-self: center;
+}
+.Hum{
+    color: wheat;
+    font-size: 25px;
+    align-self: center;
+}
    
     
-}
 
 
-/* .BG{
-    position: absolute;
-    background-image:url("https://besthqwallpapers.com/Uploads/15-4-2019/87596/thumb2-blue-ice-texture-4k-ice-cracks-macro-blue-ice-background.jpg");
-    
-    height: 100px;
 
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-blend-mode: saturation;
-} */
