@@ -75,9 +75,11 @@ hr{ /*en tag i HTML som gör en ruta */
    
     
 .UnitChooser{
-    position: relative;
-    top: 2px;
+    
+    top: 20px;
     margin-bottom: 7px;
+    margin-left: 10px;
+    text-align: left;
     
 }
 #UnitChooserBox{
@@ -87,9 +89,7 @@ hr{ /*en tag i HTML som gör en ruta */
     width: 15%
 
 }
-#UnitText{
-    margin-left: 2%;
-}
+
 body, html{
     height: 100%;
 }
