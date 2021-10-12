@@ -46,7 +46,10 @@ function defineFireBaseDestinations(){
               tempHumLog[currentRoom][tempHum].push(data);
               console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
               let element = document.getElementById(tempHum + currentRoom);
-              element.innerText = tempHum
+
+              let str = "Temperatur: "
+              if (tempHum == "Hum") str = "Fuktighet: "
+              element.innerText = str + data;
           });
       }
   }    
