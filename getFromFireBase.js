@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-analytics.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -21,7 +20,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const database = getDatabase();
 
 
@@ -31,29 +29,62 @@ let tempHumList = ["Temp", "Hum"];
 let tempHumLog = {
 };
 
-function defineFireBaseDestinations(){
-  for (let i = 0; i < roomList.length; i++) {
-      tempHumLog[roomList[i]] = {};
-      for (let j = 0; j < tempHumList.length; j++) {
-          tempHumLog[roomList[i]][tempHumList[j]] = [];
-          
-          const value = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
-
-          onValue(value, (snapshot) => {
-              let currentRoom = value._path.pieces_[0];
-              let tempHum = value._path.pieces_[1];
-              const data = snapshot.val();
-              tempHumLog[currentRoom][tempHum].push(data);
-              console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
-              let element = document.getElementById(tempHum + currentRoom);
-
-              let str = "Temperatur: "
-              if (tempHum == "Hum") str = "Fuktighet: "
-              element.innerText = str + data;
-          });
-      }
-  }    
+function updateValue(room, tempHum, value) {
+	let prefix = "Temperatur: ";
+    if (tempHum == "Hum") prefix = "Fuktighet: "
+	let tempElement = document.getElementById(tempHum + room);
+	tempElement.innerText = prefix + value;
 }
 
+for (let i = 0; i < roomList.length; i++) {
+    tempHumLog[roomList[i]] = {};
+    for (let j = 0; j < tempHumList.length; j++) {
+        tempHumLog[roomList[i]][tempHumList[j]] = [];
+        
+        const value = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
 
-defineFireBaseDestinations()
+        onValue(value, (snapshot) => {
+            let currentRoom = value._path.pieces_[0];
+            let tempHum = value._path.pieces_[1];
+            const data = snapshot.val();
+            tempHumLog[currentRoom][tempHum].push(data);
+            console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
+			updateValue(currentRoom, tempHum, data);
+        });
+    }
+
+    let button = document.getElementById("But" + roomList[i]);
+    button.onclick = function(event) {
+		let room = event.target.id;
+		room = room.slice(3, room.length);
+		console.log(room);
+    };
+}
+
+document.getElementById("Celsius").onclick = function(event,value) {
+	for (let i = 0; i < roomList.length; ++i) {
+		let room = roomList[i];
+		let list =  tempHumLog[room]["Temp"];
+		let value = list[list.length - 1];
+		updateValue(room, "Temp", value)
+	}
+}
+
+document.getElementById("Farenheit").onclick = function(event) {
+	for (let i = 0; i < roomList.length; ++i) {
+		let room = roomList[i];
+		let list =  tempHumLog[room]["Temp"];
+		let value = list[list.length - 1] * 1.8 + 32;
+		value = Math.round(value * 10) / 10;
+		updateValue(room, "Temp", value )
+	}
+}
+
+document.getElementById("Kelvin").onclick = function(event) {
+	for (let i = 0; i < roomList.length; ++i) {
+		let room = roomList[i];
+		let list =  tempHumLog[room]["Temp"];
+		let value = list[list.length - 1] + 273.5;
+		updateValue(room, "Temp", value)
+	}
+}
