@@ -25,24 +25,29 @@ const analytics = getAnalytics(app);
 const database = getDatabase();
 
 
-let roomList = ["Terrariet"];
-let temphumList = ["/Temp", "/Hum"];
-let bigList = [[[],[]],[[],[]],[[],[]],[[],[]],[[],[]]];
-// console.log(ref(database, "Terrariet/Temp/Current"));
+let roomList = ["Terrariet", "Vaxthuset"];
+let tempHumList = ["Temp", "Hum"];
 
+let tempHumLog = {
+};
 
 function defineFireBaseDestinations(){
-    let room;
-    for (room in roomList){
-        let temphum;
-        for (temphum in temphumList){
-            const value = ref(database, roomList[room] + temphumList[temphum] +"/Current");
-            onValue(value, (snapshot) => {
-                const data = snapshot.val();
-                console.log(data);
-            });
-        }
-    }    
+  for (let i = 0; i < roomList.length; i++) {
+      tempHumLog[roomList[i]] = {};
+      for (let j = 0; j < tempHumList.length; j++) {
+          tempHumLog[roomList[i]][tempHumList[j]] = [];
+          
+          const value = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
+
+          onValue(value, (snapshot) => {
+              let currentRoom = value._path.pieces_[0];
+              let tempHum = value._path.pieces_[1];
+              const data = snapshot.val();
+              tempHumLog[currentRoom][tempHum].push(data);
+              console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
+          });
+      }
+  }    
 }
 
 
