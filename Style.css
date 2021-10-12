@@ -1,0 +1,79 @@
+#HeadTitle{
+    text-align: center;
+    color: rgb(0, 0, 0);
+    margin-top: 0px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 50px;
+    
+    
+}
+hr{ /*en tag i HTML som gör en ruta */
+    height:2px;
+    border-width:0;
+    color:gray;
+    background-color:gray;
+    margin-bottom: 20px;
+
+}
+
+#FlexBoxContainer{
+    margin-bottom: 20px;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    
+    
+}
+.FlexBoxTempItem{
+    display: flex;
+    background-color: #6b6b6b;
+    border-style: solid;
+    border-color: black;
+    height: 300px;
+    width: 19.5%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+.TempHeading{
+    align-self: center;
+    color: white;
+    justify-content: flex-end;
+    
+    
+}
+
+.But{
+    transition-duration: 0.4s;
+    border-color: turquoise;
+    background-color: white;
+    font-size: 22px;
+    border-radius: 13px;
+    justify-self: flex-end;
+    align-self: flex-end;
+    margin-bottom: 2%;
+    margin-right: 2%;
+    
+    
+}
+.But:hover{
+    background-color: turquoise;
+    color: white;
+}
+.Temp{
+    color: thistle;
+    font-size: 25px;align-self: center;
+}
+.Hum{
+    color: wheat;
+    font-size: 25px;
+    align-self: center;
+}
+   
+    
+
+
+
