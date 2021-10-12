@@ -7,7 +7,10 @@
         </title>
     </head>
     <body>
-        <h1 id="HeadTitle">
+        <div id="bg-image"></div>
+        
+        <div id="webText">
+            <h1 id="HeadTitle">
             I hetaste laget
         </h1>
         <div id="UnitChooserBox">
@@ -19,30 +22,29 @@
           <label for="Celsius">Celsius</label>
         </div>
         
-        <div class="UnitChooser">
-          <input type="radio" id="Farenheit" name="TempUnit" value="Farenheit">
-          <label for="Farenheit">Farenheit</label>
-        </div>
+            <div class="UnitChooser">
+                <input type="radio" id="Farenheit" name="TempUnit" value="Farenheit">
+           <label for="Farenheit">Farenheit</label>
+            </div>
         
-        <div class="UnitChooser">
-          <input type="radio" id="Kelvin" name="TempUnit" value="Kelvin">
-          <label for="Kelvin">Kelvin</label>
+          <div class="UnitChooser">
+             <input type="radio" id="Kelvin" name="TempUnit" value="Kelvin">
+             <label for="Kelvin">Kelvin</label>
+            </div>
         </div>
-    </div>
-
      
        <hr>
        <div id="FlexBoxContainer">
            <div class="FlexBoxTempItem">
-               <h2 class="TempHeading">Rum 1</h2>
-               <div class="Temp" id="TempRum1">Temp</div>
-               <div class="Hum" id="HumRum1">Hum</div>
+               <h2 class="TempHeading">Terrariet</h2>
+               <div class="Temp" id="TempTerrariet">Temp</div>
+               <div class="Hum" id="HumTerrariet">Hum</div>
                <button class="But" id="But1">Rum 1</button>
            </div>
            <div class="FlexBoxTempItem">
-            <h2 class="TempHeading">Rum 2</h2>
-            <div class="Temp" id="TempRum2">Temp</div>
-            <div class="Hum" id="HumRum2">Hum</div>
+            <h2 class="TempHeading">Växthuset</h2>
+            <div class="Temp" id="TempVaxthuset">Temp</div>
+            <div class="Hum" id="HumVaxthuset">Hum</div>
             <button class="But" id="But2">Rum 2</button>
            </div>
            <div class="FlexBoxTempItem">
@@ -65,7 +67,7 @@
            </div>
           
        </div>
-
+        </div>
        <script type="module" src="getFromFireBase.js">
         
       </script>

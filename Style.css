@@ -1,6 +1,6 @@
 #HeadTitle{
     text-align: center;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     margin-top: 0px;
     padding: 10px;
     margin-bottom: 10px;
@@ -60,7 +60,7 @@ hr{ /*en tag i HTML som gör en ruta */
     
 }
 .But:hover{
-    background-color: turquoise;
+    background-color: rgb(29, 61, 58);
     color: white;
 }
 .Temp{
@@ -84,9 +84,48 @@ hr{ /*en tag i HTML som gör en ruta */
     position: relative;
     margin-top: -100px;
     border-style: solid;
-    width: 15%;
+    width: 15%
+
 }
 #UnitText{
     margin-left: 2%;
 }
-
+body, html{
+    height: 100%;
+}
+* {
+    box-sizing: border-box;
+  }
+  
+  #bg-image {
+    /* The image used */
+    background-image: url("https://besthqwallpapers.com/Uploads/15-4-2019/87596/thumb2-blue-ice-texture-4k-ice-cracks-macro-blue-ice-background.jpg");
+  
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+  
+    /* Full height */
+    height: 100%;
+  
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -69;
+  }
+  #webText {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+    color: white;
+    font-weight: bold;
+    border: 3px solid #f1f1f1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 80%;
+    padding: 20px;
+    text-align: center;
+  }
