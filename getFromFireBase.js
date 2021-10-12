@@ -45,6 +45,8 @@ function defineFireBaseDestinations(){
               const data = snapshot.val();
               tempHumLog[currentRoom][tempHum].push(data);
               console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
+              let element = document.getElementById(tempHum + currentRoom);
+              element.innerText = tempHum
           });
       }
   }    
