@@ -1,0 +1,128 @@
+#include <Wire.h> // Includerar Wire som behövs till I2C kommunication. Värme och fukt sensorn som vi använder kommunicerar med I2C
+#include <AM2320.h> // Includerar bibloteket AM2320 som behövs för att värme och fukt sensorn ska fungera
+#include "FirebaseESP8266.h"
+#include <ESP8266WiFi.h>
+
+#define FIREBASE_HOST "temperatur-1827b-default-rtdb.europe-west1.firebasedatabase.app" // Definerar var datan ska skickas
+#define FIREBASE_AUTH "5Jh4mEGsGCHwdz8R3CMZVdYO7GsrP1Txg4pbhfpR" // Lösenord för att se att du är ägaren av FireBasen
+#define WIFI_SSID "ABB_Indgym_Guest" // Namnet på wifiet som esp'n ska använda
+#define WIFI_PASSWORD "Welcome2abb" // Lösenordet till WiFiet
+//https://github.com/mobizt/Firebase-ESP8266
+//Define Firebase Data objects
+FirebaseData firebaseData1;
+
+String rumPath = "/Terrariet"; // Ändra till det klass rummet du ska mäta värden från!!
+String tempPath = "/Temp";
+String humPath = "/Hum";
+String currentPath = "/Current";    
+String logPath = "/Log";  
+String updatedPath = "/Updated";    
+
+AM2320 sensor;
+
+float SensorTemp;
+float SensorHum;
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin(14,12);
+
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print("Connecting to Wi-Fi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.print(".");
+        delay(300);
+    }
+    Serial.println();
+    Serial.print("Connected with IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.println();
+
+    Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+    Firebase.reconnectWiFi(true);
+
+  delay(5000);
+
+}
+
+void loop() {
+  getTempHum();
+  sendTempToFireBase();
+  sendHumToFireBase();
+  delay(30000);
+}
+
+void getTempHum(){
+  if (sensor.measure()){
+    SensorTemp = sensor.getTemperature();
+    Serial.print("Temperture: ");
+    Serial.println(SensorTemp);
+
+    SensorHum = sensor.getHumidity();
+    Serial.print("Humidity: ");
+    Serial.println(SensorHum);
+  }
+  else{
+    int errorCode = sensor.getErrorCode();
+    switch (errorCode){
+      case 1: Serial.println("ERR: Sensor is offline"); break;
+      case 2: Serial.println("ERR: CRC validation failed."); break;
+    }
+  }
+}
+
+void sendTempToFireBase(){
+  if (Firebase.setInt(firebaseData1, rumPath + tempPath + currentPath, SensorTemp))
+  {
+          Serial.println("Set " + currentPath + " to "+String(SensorTemp));
+  }
+  else
+  {
+      Serial.println("Could not set " + currentPath);
+  }
+  if (Firebase.pushInt(firebaseData1, rumPath + tempPath + logPath  , SensorTemp))
+  {
+      Serial.println("Temp logged");
+  }
+  else
+  {
+      Serial.println("Could not add temp to logger");
+  }
+        if (Firebase.pushTimestamp(firebaseData1, rumPath + tempPath + updatedPath ))
+  {
+      Serial.println("Time updated");
+  }
+  else
+  {
+      Serial.println("Could not set time");
+  }
+}
+
+void sendHumToFireBase(){
+  if (Firebase.setInt(firebaseData1, rumPath + humPath + currentPath, SensorHum))
+  {
+          Serial.println("Set " + currentPath + " to "+String(SensorHum));
+  }
+  else
+  {
+      Serial.println("Could not set " + currentPath);
+  }
+  if (Firebase.pushInt(firebaseData1, rumPath + humPath + logPath  , SensorHum))
+  {
+      Serial.println("Temp logged");
+  }
+  else
+  {
+      Serial.println("Could not add temp to logger");
+  }
+        if (Firebase.pushTimestamp(firebaseData1, rumPath + humPath + updatedPath ))
+  {
+      Serial.println("Time updated");
+  }
+  else
+  {
+      Serial.println("Could not set time");
+  }
+}
+
