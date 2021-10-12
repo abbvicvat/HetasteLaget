@@ -58,7 +58,7 @@ for (let i = 0; i < roomList.length; i++) {
     button.onclick = function(event) {
 		let room = event.target.id;
 		room = room.slice(3, room.length);
-		console.log(room);
+		console.log("Button Press", room);
     };
 }
 
