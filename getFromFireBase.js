@@ -24,8 +24,26 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase();
 
-const temp_klassrum = ref(database, 'Klassrummet/Temp/Current');
-onValue(temp_klassrum, (snapshot) => {
-const data = snapshot.val();
-console.log(data);
-});
+
+let roomList = ["Terrariet"];
+let temphumList = ["/Temp", "/Hum"];
+let bigList = [[[],[]],[[],[]],[[],[]],[[],[]],[[],[]]];
+// console.log(ref(database, "Terrariet/Temp/Current"));
+
+
+function defineFireBaseDestinations(){
+    let room;
+    for (room in roomList){
+        let temphum;
+        for (temphum in temphumList){
+            const value = ref(database, roomList[room] + temphumList[temphum] +"/Current");
+            onValue(value, (snapshot) => {
+                const data = snapshot.val();
+                console.log(data);
+            });
+        }
+    }    
+}
+
+
+defineFireBaseDestinations()

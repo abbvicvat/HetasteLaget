@@ -10,7 +10,27 @@
         <h1 id="HeadTitle">
             I hetaste laget
         </h1>
-       <div class="BG"></div>
+        <div id="UnitChooserBox">
+        <p class="UnitChooser">Välj enhet:</p>
+
+        <div class="UnitChooser">
+          <input type="radio" id="Celsius" name="TempUnit" value="Celsius"
+                 checked>
+          <label for="Celsius">Celsius</label>
+        </div>
+        
+        <div class="UnitChooser">
+          <input type="radio" id="Farenheit" name="TempUnit" value="Farenheit">
+          <label for="Farenheit">Farenheit</label>
+        </div>
+        
+        <div class="UnitChooser">
+          <input type="radio" id="Kelvin" name="TempUnit" value="Kelvin">
+          <label for="Kelvin">Kelvin</label>
+        </div>
+    </div>
+
+     
        <hr>
        <div id="FlexBoxContainer">
            <div class="FlexBoxTempItem">
@@ -45,9 +65,14 @@
            </div>
           
        </div>
+<<<<<<< HEAD
+       
 
-       <script type="module" src="">
+=======
+
+       <script type="module" src="getFromFireBase.js">
         
       </script>
+>>>>>>> bd119ebb646dac4260e049e67d53124b1984609e
     </body>
 </html>
