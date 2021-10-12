@@ -34,6 +34,7 @@ function updateValue(room, tempHum, value) {
     if (tempHum == "Hum") prefix = "Fuktighet: "
 	let tempElement = document.getElementById(tempHum + room);
 	tempElement.innerText = prefix + value;
+	console.log(room, prefix, value);
 }
 
 for (let i = 0; i < roomList.length; i++) {
@@ -62,6 +63,7 @@ for (let i = 0; i < roomList.length; i++) {
 }
 
 document.getElementById("Celsius").onclick = function(event,value) {
+	console.log("Change to Celcius");
 	for (let i = 0; i < roomList.length; ++i) {
 		let room = roomList[i];
 		let list =  tempHumLog[room]["Temp"];
@@ -71,6 +73,7 @@ document.getElementById("Celsius").onclick = function(event,value) {
 }
 
 document.getElementById("Farenheit").onclick = function(event) {
+	console.log("Change to Farenheit");
 	for (let i = 0; i < roomList.length; ++i) {
 		let room = roomList[i];
 		let list =  tempHumLog[room]["Temp"];
@@ -81,6 +84,7 @@ document.getElementById("Farenheit").onclick = function(event) {
 }
 
 document.getElementById("Kelvin").onclick = function(event) {
+	console.log("Change to Kelvin");
 	for (let i = 0; i < roomList.length; ++i) {
 		let room = roomList[i];
 		let list =  tempHumLog[room]["Temp"];
