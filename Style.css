@@ -13,16 +13,17 @@ hr{
     border-width:0;
     color:gray;
     background-color:gray;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
+
 }
 
-#FB{
+#FlexBoxTemp{
     display:flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-around;
 }
-.FBI{
+.FlexBoxTempItem{
     border-style: solid;
     border-color: black;
     padding: 90px;
