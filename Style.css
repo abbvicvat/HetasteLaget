@@ -74,6 +74,17 @@ hr{ /*en tag i HTML som gör en ruta */
 }
    
     
-
+.UnitChooser{
+    position: relative;
+    top: 2px;
+    margin-bottom: 7px;
+    
+}
+#UnitChooserBox{
+    position: relative;
+    margin-top: -100px;
+    border-style: solid;
+    width: 15%;
+}
 
 
