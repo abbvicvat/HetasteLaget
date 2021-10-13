@@ -22,13 +22,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase();
 
-
+// roomList contains the rooms we have
 let roomList = ["Terrariet", "Vaxthuset"];
+// tempHumList contains what we should show, Temperature and humidity
 let tempHumList = ["Temp", "Hum"];
-
+// tempHumLog contains for every room, a list of the temperatures and the humidity values
 let tempHumLog = {
 };
 
+// updateValue takes 3 arguments, the room, whether it should change the temperature or the humidity and the value
 function updateValue(room, tempHum, value) {
 	let prefix = "Temperatur: ";
     if (tempHum == "Hum") prefix = "Fuktighet: "
@@ -37,6 +39,8 @@ function updateValue(room, tempHum, value) {
 	console.log(room, prefix, value);
 }
 
+// In these for loops we add event listeners which are called when a value in the firebase database is updated and then calls updateValue for that room and value
+// We also add event listeners for the buttons which control whether a graph is shown or not for a specific room
 for (let i = 0; i < roomList.length; i++) {
     tempHumLog[roomList[i]] = {};
     for (let j = 0; j < tempHumList.length; j++) {
@@ -62,6 +66,8 @@ for (let i = 0; i < roomList.length; i++) {
     };
 }
 
+// Add event listeners whcich are called when the buttons for different units are pressed
+// The functions convert the temperature values to the right unit and then displays them
 document.getElementById("Celsius").onclick = function(event,value) {
 	console.log("Change to Celcius");
 	for (let i = 0; i < roomList.length; ++i) {
@@ -88,7 +94,7 @@ document.getElementById("Kelvin").onclick = function(event) {
 	for (let i = 0; i < roomList.length; ++i) {
 		let room = roomList[i];
 		let list =  tempHumLog[room]["Temp"];
-		let value = list[list.length - 1] + 273.5;
+		let value = list[list.length - 1] + 273.2;
 		updateValue(room, "Temp", value)
 	}
 }
