@@ -83,8 +83,7 @@ document.getElementById("Farenheit").onclick = function(event) {
 	for (let i = 0; i < roomList.length; ++i) {
 		let room = roomList[i];
 		let list =  tempHumLog[room]["Temp"];
-		let value = list[list.length - 1] * 1.8 + 32;
-		value = Math.round(value * 10) / 10;
+		let value = (list[list.length - 1] * 1.8 + 32).toFixed(1);
 		updateValue(room, "Temp", value )
 	}
 }
