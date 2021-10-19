@@ -1,4 +1,11 @@
-
+#agraf {
+    display:flex;
+    flex-flow: row;
+}
+.grafdiv{
+    display:flex;
+    width:50%;
+}
 
 #HeadTitle{
     text-align: center;
