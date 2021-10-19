@@ -23,14 +23,59 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase();
 
 let currentUnit = "Celcius";
-const GRAPH_LENGTH = 10;
+const GRAPH_LENGTH = 50;
 // roomList contains the rooms we have
-let roomList = ["Terrariet", "Vaxthuset"];
+let roomList = ["Vardagsrummet", "Vaxthuset", "Hallonrummet", "Pingisrummet", "Cafeterian"];
 // tempHumList contains what we should show, Temperature and humidity
 let tempHumList = ["Temp", "Hum"];
 // tempHumLog contains for every room, a list of the temperatures and the humidity values
 let tempHumLog = {
 };
+
+// Initalize charts and some values needed for them
+const labels = [];
+for (let i = GRAPH_LENGTH - 1; i >= 0; i--) labels.push(i);
+const colors = ["red", "green", "black", "#FFCD01", "blue"];
+
+let tempgGraph = new Chart(document.getElementById("tempGraph"), {
+    type: 'line',
+    data: {
+    labels: labels,
+    datasets: [
+        
+    ]},
+    options: {
+		tension: 0.5,
+		title: {
+			display: true,
+			text: 'World population per region (in millions)'
+		}
+    }
+});
+
+let humGraph = new Chart(document.getElementById("humGraph"), {
+    type: 'line',
+    data: {
+    labels: labels,
+    datasets: [
+        
+    ]},
+    options: {
+		tension: 0.5,
+		title: {
+			display: true,
+			text: 'World population per region (in millions)',
+		}
+    }
+});
+
+const roomIndex = {
+	"Vardagsrummet": 0,
+	"Vaxthuset": 1,
+	"Hallonrummet": 2,
+	"Pingisrummet": 3,
+	"Cafeterian": 4,
+}
 
 // Takes the value in celcius and converts it to the correct unit
 function convert(value) {
@@ -41,13 +86,29 @@ function convert(value) {
 
 // updateValue takes 3 arguments, the room, whether it should change the temperature or the humidity and the value
 function updateValue(room, tempHum, value) {
-	let prefix = "Temperatur: ";
-    if (tempHum == "Hum") prefix = "Fuktighet: "
-	else value = convert(value);
-	
+	let prefix = "";
+    if (tempHum == "Hum") 
+		prefix = "Fuktighet:";
+	else {
+		prefix = "Temperatur:"
+		value = convert(value);
+	}
+
 	let tempElement = document.getElementById(tempHum + room);
 	tempElement.innerText = prefix + value;
 	console.log(room, prefix, value);
+}
+
+// updateGraph updates tempGraph or humGraph depending on the value of tempHum and updates the line at position index in that graph to the values in data
+// If tempHum is temperature it also converts the values in data to the correct unit since the temperature data is given in celcius
+function updateGraph(tempHum, index, data) {
+	if (tempHum == "Temp") {
+		let convertedData = [];
+		for (let i = 0; i < data.length; i++) convertedData[i] = convert(data[i]);
+		tempgGraph.data.datasets[index].data = convertedData;
+		console.log(tempHum, index, convertedData);
+	}
+	else humGraph.data.datasets[index].data = data;
 }
 
 // In these for-loops, we add event listeners which are called when a value in the firebase database is updated and then calls updateValue for that room and value
@@ -67,38 +128,90 @@ for (let i = 0; i < roomList.length; i++) {
 				let valueLog = tempHumLog[currentRoom][tempHum];
 				valueLog.push(childData);
 				if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
-				console.log("From Log:", currentRoom, tempHum, childData);
 			});
+
+			let currentRoom = databaseRef._path.pieces_[0];
+            let tempHum = databaseRef._path.pieces_[1];
+
+			if (tempHum == "Temp") {
+				let data = tempHumLog[currentRoom]["Temp"]
+				let dataSet = {
+					fill: false,
+					label: currentRoom,
+					borderColor: colors[roomIndex[currentRoom]],
+					data: data
+				};
+
+				tempgGraph.data.datasets.push(dataSet);
+				tempgGraph.update();
+				
+				console.log(dataSet["label"], dataSet["borderColor"], dataSet["data"]);
+				updateValue(currentRoom, "Temp", data[data.length - 1]);
+			}
+
+			else {
+				let data = tempHumLog[currentRoom]["Hum"];
+				let dataSet = {
+					fill: false,
+					label: currentRoom,
+					borderColor: colors[roomIndex[currentRoom]],
+					data: data
+				};
+
+				humGraph.data.datasets.push(dataSet);
+				humGraph.update();
+
+				console.log(currentRoom, "Hum");
+				updateValue(currentRoom, "Hum", data[data.length - 1]);
+			}
 		}, {
 			onlyOnce: true
 		});
-		
+
         databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
         onValue(databaseRef, (snapshot) => {
             let currentRoom = databaseRef._path.pieces_[0];
             let tempHum = databaseRef._path.pieces_[1];
+
             const data = snapshot.val();
             let valueLog = tempHumLog[currentRoom][tempHum];
 			valueLog.push(data);
-			if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
+
+			if (valueLog.length > GRAPH_LENGTH) valueLog.unshift();
             console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
 			updateValue(currentRoom, tempHum, data);
+			
+			if (tempHum == "Temp") {
+				updateGraph("Temp", roomIndex[currentRoom], valueLog);
+				tempgGraph.update();
+			}
+			else {
+				updateGraph("Hum", roomIndex[currentRoom], valueLog);
+				humGraph.update();
+			}
         });
     }
 }
 
-// Add event listeners whcich are called when the buttons for different units are pressed
-// The functions changes currentUnit to the right unit and then displays the values
+// updateTemps updates the temperatures displayed on the website and updates the values in the temperature-graph and displays the new graph
+function updateTemps() {
+	for (let i = 0; i < roomList.length; ++i) {
+		let room = roomList[i];
+		let valueLog =  tempHumLog[room]["Temp"];
+		let value = valueLog[valueLog.length - 1];
+		updateValue(room, "Temp", value)
+		updateGraph("Temp", roomIndex[room], valueLog);
+	}
+	tempgGraph.update();
+}
+
+// Add event listeners whcich are called when the buttons to change to different units are pressed
+// The functions changes currentUnit to the Celcius, Farenheit or Kelvin depending on what button was pressed and then calls updateTemps
 document.getElementById("Celsius").onclick = function(event) {
 	if (currentUnit != "Celcius") {
 		console.log("Change to Celcius");
 		currentUnit = "Celcius";
-		for (let i = 0; i < roomList.length; ++i) {
-			let room = roomList[i];
-			let list =  tempHumLog[room]["Temp"];
-			let value = list[list.length - 1];
-			updateValue(room, "Temp", value)
-		}
+		updateTemps();
 	}
 }
 
@@ -106,12 +219,7 @@ document.getElementById("Farenheit").onclick = function(event) {
 	if (currentUnit != "Farenheit") {
 		console.log("Change to Farenheit");
 		currentUnit = "Farenheit";
-		for (let i = 0; i < roomList.length; ++i) {
-			let room = roomList[i];
-			let list =  tempHumLog[room]["Temp"];
-			let value = list[list.length - 1];
-			updateValue(room, "Temp", value)
-		}
+		updateTemps();
 	}
 }
 
@@ -119,19 +227,6 @@ document.getElementById("Kelvin").onclick = function(event) {
 	if (currentUnit != "Kelvin") {
 		console.log("Change to Kelvin");
 		currentUnit = "Kelvin";
-		for (let i = 0; i < roomList.length; ++i) {
-			let room = roomList[i];
-			let list =  tempHumLog[room]["Temp"];
-			let value = list[list.length - 1];
-			updateValue(room, "Temp", value)
-		}
+		updateTemps();
 	}
 }
-
-const labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const colors = ["#000000", "#FFFFFF"];
-
-let chartsTemp = new Chart(ctx, {
-	type: "line",
-	dat
-});

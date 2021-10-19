@@ -1,8 +1,9 @@
-#agraf {
+#graphDivContainer {
     display:flex;
     flex-flow: row;
+    margin-bottom: 50px;
 }
-.grafdiv{
+.graphDiv{
     display:flex;
     width:50%;
 }
