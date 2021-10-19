@@ -1,128 +1,132 @@
 #include <Wire.h> // Includerar Wire som behövs till I2C kommunication. Värme och fukt sensorn som vi använder kommunicerar med I2C
 #include <AM2320.h> // Includerar bibloteket AM2320 som behövs för att värme och fukt sensorn ska fungera
-#include "FirebaseESP8266.h"
-#include <ESP8266WiFi.h>
+#include "FirebaseESP8266.h" // Includerar ett biblotek som gör att ESP'n kan komunisera med FireBase
+#include <ESP8266WiFi.h> // Includerar ett biblotek som gör att ESP'n ska kunna använda WiFi
 
 #define FIREBASE_HOST "temperatur-1827b-default-rtdb.europe-west1.firebasedatabase.app" // Definerar var datan ska skickas
 #define FIREBASE_AUTH "5Jh4mEGsGCHwdz8R3CMZVdYO7GsrP1Txg4pbhfpR" // Lösenord för att se att du är ägaren av FireBasen
 #define WIFI_SSID "ABB_Indgym_Guest" // Namnet på wifiet som esp'n ska använda
 #define WIFI_PASSWORD "Welcome2abb" // Lösenordet till WiFiet
 //https://github.com/mobizt/Firebase-ESP8266
-//Define Firebase Data objects
-FirebaseData firebaseData1;
 
-String rumPath = "/Terrariet"; // Ändra till det klass rummet du ska mäta värden från!!
-String tempPath = "/Temp";
-String humPath = "/Hum";
-String currentPath = "/Current";    
-String logPath = "/Log";  
-String updatedPath = "/Updated";    
+FirebaseData firebaseData1;  //Definerar Firebase Data objekt som innehåller många funktioner till firebase
+AM2320 sensor; //Definerar sensor Data objekt som innehåller många funktioner som behövs för att hämta data från sensorn
 
-AM2320 sensor;
+const String rumPath = "/Terrariet"; // En konstant variabel som används för att veta vilket rum datan är skickad från. 
+//Variabeln är olika för alla, vilket gör att vi lätt kan se var den skickade datan kommer från
+const String tempPath = "/Temp"; // En konstatnt variabel som innehåller vägen temperaturen kommer skickas till i firebase
+const String humPath = "/Hum"; // En konstatnt variabel som innehåller vägen luft fuktigheten kommer skickas till i firebase
+const String currentPath = "/Current"; // Definerar en konstant string på vägen där den senaste uppdaterade datan kommer visas 
+const String logPath = "/Log";  // Definerar en konstant variabel väg som kommer där all data kommer sparas
+const String updatedPath = "/Updated";    // En konstant string som innehåller vägen där tidpunkten data skickats sparas
 
-float SensorTemp;
-float SensorHum;
+float SensorTemp; // Definerar en float som sparar den nuvarande temperaturen
+float SensorHum; // Definerar en float som sparar den nuvarande luft fuktigheten
 
-void setup() {
-  Serial.begin(115200);
-  Wire.begin(14,12);
+void setup() { // Denna funktion körs i början av programmet innan loopen 
+  Serial.begin(115200); // Säger till arduinon i vilken hastighet komunikationen ska ske med serial monitorn
+  Wire.begin(14,12); // Startar Wire som används för I2C komunikationen och säger vilka pins som ska användas för det
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.print("Connecting to Wi-Fi");
-    while (WiFi.status() != WL_CONNECTED)
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Startar WiFi'et på ESP'n och skickar med wifiets namn och lösenord
+    Serial.print("Connecting to Wi-Fi"); // printar i serial monitorn att arduinon försöker connecta med WiFi'et
+    while (WiFi.status() != WL_CONNECTED) // en while loop som körs medans WiFi'et inte har connectat
     {
-        Serial.print(".");
-        delay(300);
+        Serial.print("."); // printar en . i serial monitorn varje 0,3 sekunder för att feedback att WiFi'et höller på att connecta
+        delay(300);       //    ^
     }
-    Serial.println();
-    Serial.print("Connected with IP: ");
-    Serial.println(WiFi.localIP());
-    Serial.println();
+    Serial.println();// printar en ny linje i serial monitorn
+    Serial.print("Connected with IP: "); // Printar att WiFi'et har connectat
+    Serial.println(WiFi.localIP()); // Skriver ut den locala IP adressen
+    Serial.println(); // Skriver ut en ny linje
 
-    Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-    Firebase.reconnectWiFi(true);
+    Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); // Startar FireBase och skickar med var den ska skickas med HOST och AUTH för att veta att det är du som är ägare
+    Firebase.reconnectWiFi(true); // Reconnnectar WiFi'et med Firebase (kolla om det är det den gör och skriv bättre!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
 
-  delay(5000);
-
+  delay(5000); // Väntar 5000 milisekunder eller 5 sekunder för att vara säker att fire base och wifi'et är kopplade innan vi börjar skicka information
 }
 
-void loop() {
-  getTempHum();
-  sendTempToFireBase();
-  sendHumToFireBase();
-  delay(30000);
+void loop() { // En loop som körs om och om efter setup'en så länge arduinon har ström
+  getTempHum(); // Kör funktionen getTempHum
+  sendTempToFireBase(); // Kör funktionen sendTempToFireBase
+  sendHumToFireBase(); // Kör funktionenn send HumToFireBase
+  delay(30000); // Väntar 30 sekunder innan program hämtar och skickar upp ny data då temperaturen och luft fuktigheten förmodligen endå inte kommer ändras så mycket
 }
 
-void getTempHum(){
-  if (sensor.measure()){
-    SensorTemp = sensor.getTemperature();
-    Serial.print("Temperture: ");
-    Serial.println(SensorTemp);
+void getTempHum(){ // En funktion som ska hämta temperaturen och luft fuktigheten och spara dem i variabler
+  if (sensor.measure()){ // Kör allt i if statmenten ifall sensorn kan mäta värden
+    SensorTemp = sensor.getTemperature(); // Sparar temperaturen från sensorn i variabeln SensorTemp
+    Serial.println("Temperture: "); 
+    Serial.println(SensorTemp); // Skriver ut temperaturen i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera
 
-    SensorHum = sensor.getHumidity();
+    SensorHum = sensor.getHumidity(); // Sparar luft fuktigheten från sensorn i variabeln SensorHum
     Serial.print("Humidity: ");
-    Serial.println(SensorHum);
+    Serial.println(SensorHum); // Skriver ut luft fuktigheten i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera
   }
-  else{
-    int errorCode = sensor.getErrorCode();
-    switch (errorCode){
-      case 1: Serial.println("ERR: Sensor is offline"); break;
+  else{ // Detta körs om sensorn inte kan mäta några värden 
+    int errorCode = sensor.getErrorCode(); // sparar vad som gick fel i variabeln errorCode i form av en kod(i det här fallet består koden av en intager)
+    switch (errorCode){ // En switch statment som tar in errorCode som innehåller vad som gick fel i form av en kod och printar ut vad som gick fel utifrån det
+      case 1: Serial.println("ERR: Sensor is offline"); break; // ifall errorCode == 1 så printas det ut i serial monitorn vad det felet betyde.
+      // case'n bryter sedan ut ur switchen så att inget mer i switchen kan köras.
       case 2: Serial.println("ERR: CRC validation failed."); break;
     }
   }
 }
 
-void sendTempToFireBase(){
-  if (Firebase.setInt(firebaseData1, rumPath + tempPath + currentPath, SensorTemp))
-  {
-          Serial.println("Set " + currentPath + " to "+String(SensorTemp));
+void sendTempToFireBase(){ // En funktion som skickar temperaturen till FireBase
+  if (Firebase.setInt(firebaseData1, rumPath + tempPath + currentPath, SensorTemp)) 
+  // Skickar temperaturen till en designerad väg med FireBase funktionen setInt som ändrar det gammla värdet till det nya värdet
+  { // Ifall detta lyckas så körs detta
+          Serial.println("Set " + currentPath + " to "+String(SensorTemp)); // En print statment som underlättar för felsökning
   }
-  else
+  else // Ifall arduinon inte lyckas skicka upp datan körs detta
   {
-      Serial.println("Could not set " + currentPath);
+      Serial.println("Could not set " + currentPath); // En print statment som underlättar för att hitta fel
   }
   if (Firebase.pushInt(firebaseData1, rumPath + tempPath + logPath  , SensorTemp))
-  {
-      Serial.println("Temp logged");
+  // Skickar temperaturen till en designerad väg med FireBase funktionen puchInt som lägger till det nya värdet i en lista
+  { // ifall ESP'n lyckas skicka upp datan så körs allt inom måsvingarna
+      Serial.println("Temp logged"); // Printar att temperaturen är loggad, underlättar vid felsökning
   }
-  else
+  else // Ifall datan inte lyckas skickas upp
   {
-      Serial.println("Could not add temp to logger");
+      Serial.println("Could not add temp to logger");// Printar att temperaturen inte kunnde loggas, underlättar vid felsökning
   }
-        if (Firebase.pushTimestamp(firebaseData1, rumPath + tempPath + updatedPath ))
-  {
-      Serial.println("Time updated");
+  if (Firebase.pushTimestamp(firebaseData1, rumPath + tempPath + updatedPath ))
+  // Skickar tidpunkten till en designerad väg med FireBase funktionen puchTimestamp som lägger till det nya värdet i en lista
+  { // Ifall uppskickningen lyckas körs detta
+      Serial.println("Time updated"); // Skriver att tiden är updaterad vilket underlättar ifall man felsöker
   }
-  else
+  else // ifall uppskickningen misslyckas körs detta
   {
-      Serial.println("Could not set time");
+      Serial.println("Could not set time"); // Printar att tiden inte kunde updateras 
   }
 }
 
-void sendHumToFireBase(){
-  if (Firebase.setInt(firebaseData1, rumPath + humPath + currentPath, SensorHum))
-  {
-          Serial.println("Set " + currentPath + " to "+String(SensorHum));
+void sendHumToFireBase(){ // En funktion som skickar luft fuktigheten till FireBase
+  if (Firebase.setInt(firebaseData1, rumPath + humPath + currentPath, SensorHum)) 
+  // Skickar luft fuktigheten till en designerad väg med FireBase funktionen setInt som ändrar det gammla värdet till det nya värdet
+  { // Ifall deta lyckas så körs detta
+          Serial.println("Set " + currentPath + " to "+String(SensorHum));// printar i serial monitorn att det lyckades och vilken temperatur som skickade upp 
   }
-  else
+  else// Om uppskickningen inte lyckas så körs detta 
   {
-      Serial.println("Could not set " + currentPath);
+      Serial.println("Could not set " + currentPath); // skriver i serial monitorn att uppskickningen misslyckades vilket kan underlätta när man söker fel i programmet
   }
   if (Firebase.pushInt(firebaseData1, rumPath + humPath + logPath  , SensorHum))
+  // Skickar luft fuktigheten till en bestämd väg med FireBase funktionen puchInt som lägger till det nya värdet i en lista
+  { // Detta körs om de lyckas
+      Serial.println("Hum logged"); // Skriver att det lyckades vilket gör det lättare att felsöka
+  } 
+  else// Om det inte lycakdes körs detta
   {
-      Serial.println("Temp logged");
-  }
-  else
-  {
-      Serial.println("Could not add temp to logger");
+      Serial.println("Could not add hum to logger"); // Printar att luft fuktigheten inde kunde loggas
   }
         if (Firebase.pushTimestamp(firebaseData1, rumPath + humPath + updatedPath ))
-  {
-      Serial.println("Time updated");
+  { // Skickar tidpunkten då datan skickades till en lista med Firebase funktionen pushTimestamp. Detta skickas till vägen rumPath + humPath + updatedPath
+      Serial.println("Time updated"); // skriver att tiden blev uppdaterad ifall datan lyckades bli uppskickad
   }
-  else
+  else // Detta körs om datan inte lyckades bli uppskickad
   {
-      Serial.println("Could not set time");
+      Serial.println("Could not set time"); // Skriver att tiden inte kunde bli uppdaterad. Detta gör det lättare att hitta vad som är fel om något inte fungerar
   }
 }
-

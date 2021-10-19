@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="StyleAlt.css">
+        <link rel="stylesheet" href="Style.css">
         <title>
             I hetaste laget
         </title>
