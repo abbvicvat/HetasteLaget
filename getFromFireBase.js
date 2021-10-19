@@ -22,6 +22,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase();
 
+let currentUnit = "Celcius";
+const GRAPH_LENGTH = 30;
 // roomList contains the rooms we have
 let roomList = ["Terrariet", "Vaxthuset"];
 // tempHumList contains what we should show, Temperature and humidity
@@ -30,10 +32,19 @@ let tempHumList = ["Temp", "Hum"];
 let tempHumLog = {
 };
 
+// Takes the value in celcius and converts it to the correct unit
+function convert(value) {
+	if (currentUnit == "Farenheit") value = value * 1.8 + 32
+	else if (currentUnit == "Kelvin") value += 	273.15;
+	return value.toFixed(1);
+}
+
 // updateValue takes 3 arguments, the room, whether it should change the temperature or the humidity and the value
 function updateValue(room, tempHum, value) {
 	let prefix = "Temperatur: ";
     if (tempHum == "Hum") prefix = "Fuktighet: "
+	else value = convert(value);
+	
 	let tempElement = document.getElementById(tempHum + room);
 	tempElement.innerText = prefix + value;
 	console.log(room, prefix, value);
@@ -46,54 +57,75 @@ for (let i = 0; i < roomList.length; i++) {
     for (let j = 0; j < tempHumList.length; j++) {
         tempHumLog[roomList[i]][tempHumList[j]] = [];
         
-        const value = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
-
-        onValue(value, (snapshot) => {
-            let currentRoom = value._path.pieces_[0];
-            let tempHum = value._path.pieces_[1];
+		// This fills tempHumLog with the values already in our firebase database
+		let databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Log");
+		onValue(databaseRef, (snapshot) => {
+			snapshot.forEach((childSnapshot) => {
+				let currentRoom = databaseRef._path.pieces_[0];
+            	let tempHum = databaseRef._path.pieces_[1];
+				const childData = childSnapshot.val();
+				let valueLog = tempHumLog[currentRoom][tempHum];
+				valueLog.push(childData);
+				if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
+				console.log("From Log:", currentRoom, tempHum, childData);
+			});
+		}, {
+			onlyOnce: true
+		});
+		
+        databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
+        onValue(databaseRef, (snapshot) => {
+            let currentRoom = databaseRef._path.pieces_[0];
+            let tempHum = databaseRef._path.pieces_[1];
             const data = snapshot.val();
-            tempHumLog[currentRoom][tempHum].push(data);
+            let valueLog = tempHumLog[currentRoom][tempHum];
+			valueLog.push(data);
+			if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
             console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
 			updateValue(currentRoom, tempHum, data);
         });
     }
-
-    let button = document.getElementById("But" + roomList[i]);
-    button.onclick = function(event) {
-		let room = event.target.id;
-		room = room.slice(3, room.length);
-		console.log("Button Press", room);
-    };
 }
 
 // Add event listeners whcich are called when the buttons for different units are pressed
-// The functions convert the temperature values to the right unit and then displays them
-document.getElementById("Celsius").onclick = function(event,value) {
-	console.log("Change to Celcius");
-	for (let i = 0; i < roomList.length; ++i) {
-		let room = roomList[i];
-		let list =  tempHumLog[room]["Temp"];
-		let value = list[list.length - 1];
-		updateValue(room, "Temp", value)
+// The functions changes currentUnit to the right unit and then displays the values
+document.getElementById("Celsius").onclick = function(event) {
+	if (currentUnit != "Celcius") {
+		console.log("Change to Celcius");
+		currentUnit = "Celcius";
+		for (let i = 0; i < roomList.length; ++i) {
+			let room = roomList[i];
+			let list =  tempHumLog[room]["Temp"];
+			let value = list[list.length - 1];
+			updateValue(room, "Temp", value)
+		}
 	}
 }
 
 document.getElementById("Farenheit").onclick = function(event) {
-	console.log("Change to Farenheit");
-	for (let i = 0; i < roomList.length; ++i) {
-		let room = roomList[i];
-		let list =  tempHumLog[room]["Temp"];
-		let value = (list[list.length - 1] * 1.8 + 32).toFixed(1);
-		updateValue(room, "Temp", value )
+	if (currentUnit != "Farenheit") {
+		console.log("Change to Farenheit");
+		currentUnit = "Farenheit";
+		for (let i = 0; i < roomList.length; ++i) {
+			let room = roomList[i];
+			let list =  tempHumLog[room]["Temp"];
+			let value = list[list.length - 1];
+			updateValue(room, "Temp", value)
+		}
 	}
 }
 
 document.getElementById("Kelvin").onclick = function(event) {
-	console.log("Change to Kelvin");
-	for (let i = 0; i < roomList.length; ++i) {
-		let room = roomList[i];
-		let list =  tempHumLog[room]["Temp"];
-		let value = list[list.length - 1] + 273.2;
-		updateValue(room, "Temp", value)
+	if (currentUnit != "Kelvin") {
+		console.log("Change to Kelvin");
+		currentUnit = "Kelvin";
+		for (let i = 0; i < roomList.length; ++i) {
+			let room = roomList[i];
+			let list =  tempHumLog[room]["Temp"];
+			let value = list[list.length - 1];
+			updateValue(room, "Temp", value)
+		}
 	}
 }
+
+const labels = []
