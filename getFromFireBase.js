@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase();
 
 let currentUnit = "Celcius";
-const GRAPH_LENGTH = 30;
+const GRAPH_LENGTH = 10;
 // roomList contains the rooms we have
 let roomList = ["Terrariet", "Vaxthuset"];
 // tempHumList contains what we should show, Temperature and humidity
@@ -128,4 +128,10 @@ document.getElementById("Kelvin").onclick = function(event) {
 	}
 }
 
-const labels = []
+const labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const colors = ["#000000", "#FFFFFF"];
+
+let chartsTemp = new Chart(ctx, {
+	type: "line",
+	dat
+});
