@@ -39,7 +39,7 @@ function updateValue(room, tempHum, value) {
 	console.log(room, prefix, value);
 }
 
-// In these for loops we add event listeners which are called when a value in the firebase database is updated and then calls updateValue for that room and value
+// In these for-loops, we add event listeners which are called when a value in the firebase database is updated and then calls updateValue for that room and value
 // We also add event listeners for the buttons which control whether a graph is shown or not for a specific room
 for (let i = 0; i < roomList.length; i++) {
     tempHumLog[roomList[i]] = {};
