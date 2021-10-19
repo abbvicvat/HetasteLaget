@@ -1,0 +1,28 @@
+
+/* #TopFlexBox{
+    display: flex;
+    background-color: #1D174C;
+    width: 100vw;
+    margin-left: 0%;
+    margin-right: 0%;
+    flex-direction: row;
+    flex-wrap:nowrap;
+}
+
+#HeadTitle{
+    justify-self: center;
+    margin-top: 0px ;
+    padding-top: 10px;
+    width: 50%;
+}
+#UnitChooserBox{
+    background-color: salmon;
+    width:20%;
+} 
+body{
+    background-image: linear-gradient(#1D174C, #45307d);
+    padding: 0;
+    margin: 0;
+    color: #dff3e4;
+} */
+
