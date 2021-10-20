@@ -118,9 +118,9 @@ for (let i = 0; i < roomList.length; i++) {
     for (let j = 0; j < tempHumList.length; j++) {
         tempHumLog[roomList[i]][tempHumList[j]] = [];
         
-		// This fills tempHumLog with the values already in our firebase database
 		let databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Log");
 		onValue(databaseRef, (snapshot) => {
+			// This fills tempHumLog with the values logged in our firebase database
 			snapshot.forEach((childSnapshot) => {
 				let currentRoom = databaseRef._path.pieces_[0];
             	let tempHum = databaseRef._path.pieces_[1];
@@ -133,11 +133,13 @@ for (let i = 0; i < roomList.length; i++) {
 			let currentRoom = databaseRef._path.pieces_[0];
             let tempHum = databaseRef._path.pieces_[1];
 
+			// This adds the lines to tempGraph and humGraph with the data that we in tempHumLog 
 			if (tempHum == "Temp") {
 				let data = tempHumLog[currentRoom]["Temp"]
 				let dataSet = {
 					fill: false,
 					label: currentRoom,
+					// The color depends on what room the line is displaying
 					borderColor: colors[roomIndex[currentRoom]],
 					data: data
 				};
@@ -169,6 +171,9 @@ for (let i = 0; i < roomList.length; i++) {
 		});
 
         databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
+		// This function is called when a new value is pushed to the database, adds that value to tempHumLog and updates the value displayed by calling updateValue
+		// It also updates the graph corresponding to the value which was changed by calling updateGraph
+		// If there are to many values in the log we remove the oldest one
         onValue(databaseRef, (snapshot) => {
             let currentRoom = databaseRef._path.pieces_[0];
             let tempHum = databaseRef._path.pieces_[1];
@@ -177,7 +182,7 @@ for (let i = 0; i < roomList.length; i++) {
             let valueLog = tempHumLog[currentRoom][tempHum];
 			valueLog.push(data);
 
-			if (valueLog.length > GRAPH_LENGTH) valueLog.unshift();
+			if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
             console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
 			updateValue(currentRoom, tempHum, data);
 			
