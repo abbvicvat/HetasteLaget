@@ -12,7 +12,7 @@
 FirebaseData firebaseData1;  //Definerar Firebase Data objekt som innehåller många funktioner till firebase
 AM2320 sensor; //Definerar sensor Data objekt som innehåller många funktioner som behövs för att hämta data från sensorn
 
-const String rumPath = "/Terrariet"; // En konstant variabel som används för att veta vilket rum datan är skickad från. 
+const String rumPath = "/Vardagsrummet"; // En konstant variabel som används för att veta vilket rum datan är skickad från. 
 //Variabeln är olika för alla, vilket gör att vi lätt kan se var den skickade datan kommer från
 const String tempPath = "/Temp"; // En konstatnt variabel som innehåller vägen temperaturen kommer skickas till i firebase
 const String humPath = "/Hum"; // En konstatnt variabel som innehåller vägen luft fuktigheten kommer skickas till i firebase
@@ -46,21 +46,10 @@ void setup() { // Denna funktion körs i början av programmet innan loopen
 }
 
 void loop() { // En loop som körs om och om efter setup'en så länge arduinon har ström
-  getTempHum(); // Kör funktionen getTempHum
-  sendTempToFireBase(); // Kör funktionen sendTempToFireBase
-  sendHumToFireBase(); // Kör funktionenn send HumToFireBase
-  delay(30000); // Väntar 30 sekunder innan program hämtar och skickar upp ny data då temperaturen och luft fuktigheten förmodligen endå inte kommer ändras så mycket
-}
-
-void getTempHum(){ // En funktion som ska hämta temperaturen och luft fuktigheten och spara dem i variabler
   if (sensor.measure()){ // Kör allt i if statmenten ifall sensorn kan mäta värden
-    SensorTemp = sensor.getTemperature(); // Sparar temperaturen från sensorn i variabeln SensorTemp
-    Serial.println("Temperture: "); 
-    Serial.println(SensorTemp); // Skriver ut temperaturen i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera
-
-    SensorHum = sensor.getHumidity(); // Sparar luft fuktigheten från sensorn i variabeln SensorHum
-    Serial.print("Humidity: ");
-    Serial.println(SensorHum); // Skriver ut luft fuktigheten i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera
+    getTempHum(); // Kör funktionen getTempHum
+    sendTempToFireBase(); // Kör funktionen sendTempToFireBase
+    sendHumToFireBase(); // Kör funktionenn send HumToFireBase
   }
   else{ // Detta körs om sensorn inte kan mäta några värden 
     int errorCode = sensor.getErrorCode(); // sparar vad som gick fel i variabeln errorCode i form av en kod(i det här fallet består koden av en intager)
@@ -70,6 +59,17 @@ void getTempHum(){ // En funktion som ska hämta temperaturen och luft fuktighet
       case 2: Serial.println("ERR: CRC validation failed."); break;
     }
   }
+  delay(30000); // Väntar 30 sekunder innan program hämtar och skickar upp ny data då temperaturen och luft fuktigheten förmodligen endå inte kommer ändras så mycket
+}
+
+void getTempHum(){ // En funktion som ska hämta temperaturen och luft fuktigheten och spara dem i variabler
+  SensorTemp = sensor.getTemperature(); // Sparar temperaturen från sensorn i variabeln SensorTemp
+  Serial.println("Temperture: "); 
+  Serial.println(SensorTemp); // Skriver ut temperaturen i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera
+
+  SensorHum = sensor.getHumidity(); // Sparar luft fuktigheten från sensorn i variabeln SensorHum
+  Serial.print("Humidity: ");
+  Serial.println(SensorHum); // Skriver ut luft fuktigheten i serial monitorn. Detta gör det lättare att felsöka om något inte skulle fungera 
 }
 
 void sendTempToFireBase(){ // En funktion som skickar temperaturen till FireBase
