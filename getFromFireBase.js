@@ -54,7 +54,7 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 			 y:{
 				 ticks:{
 					 callback: function(value,index,values){
-						 return value + " º" + currentUnit[0];
+						 return value + "º" + currentUnit[0];
 					 }
 
 				 }
