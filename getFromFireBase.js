@@ -48,8 +48,18 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 		tension: 0.5,
 		title: {
 			display: true,
-			text: 'World population per region (in millions)'
-		}
+			text: 'temperatur över tid'
+		 },
+		 scales:{
+			 y:{
+				 ticks:{
+					 callback: function(value,index,values){
+						 return value + " º" + currentUnit[0];
+					 }
+
+				 }
+			 }
+		 }
     }
 });
 
@@ -64,7 +74,17 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
 		tension: 0.5,
 		title: {
 			display: true,
-			text: 'World population per region (in millions)',
+			text: 'luftfuktighet över tid',
+		},
+		scales:{
+			y:{
+				ticks:{
+					callback: function(value,index,values){
+						return value + "%";
+					}
+
+				}
+			}
 		}
     }
 });
