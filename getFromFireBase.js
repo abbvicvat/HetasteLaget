@@ -48,8 +48,18 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 		tension: 0.5,
 		title: {
 			display: true,
-			text: 'World population per region (in millions)'
-		}
+			text: 'temperatur över tid'
+		 },
+		 scales:{
+			 y:{
+				 ticks:{
+					 callback: function(value,index,values){
+						 return value + " º" + currentUnit[0];
+					 }
+
+				 }
+			 }
+		 }
     }
 });
 
@@ -64,7 +74,17 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
 		tension: 0.5,
 		title: {
 			display: true,
-			text: 'World population per region (in millions)',
+			text: 'luftfuktighet över tid',
+		},
+		scales:{
+			y:{
+				ticks: {
+					callback: function(value,index,values){
+						return value + "%";
+					}
+
+				}
+			}
 		}
     }
 });
@@ -86,17 +106,18 @@ function convert(value) {
 
 // updateValue takes 3 arguments, the room, whether it should change the temperature or the humidity and the value
 function updateValue(room, tempHum, value) {
-	let prefix = "";
+	// suffix is what should be displayed after the value
+	let suffix = "";
     if (tempHum == "Hum") 
-		prefix = "Fuktighet:";
+		suffix = "%";
 	else {
-		prefix = "Temperatur:"
+		suffix = " º" + currentUnit[0];
 		value = convert(value);
 	}
 
 	let tempElement = document.getElementById(tempHum + room);
-	tempElement.innerText = prefix + value;
-	console.log(room, prefix, value);
+	tempElement.innerText = value + suffix;
+	console.log(room, value + suffix);
 }
 
 // updateGraph updates tempGraph or humGraph depending on the value of tempHum and updates the line at position index in that graph to the values in data
@@ -123,9 +144,13 @@ for (let i = 0; i < roomList.length; i++) {
 			// This fills tempHumLog with the values logged in our firebase database
 			snapshot.forEach((childSnapshot) => {
 				let currentRoom = databaseRef._path.pieces_[0];
+				// tempHum is either "temp" or "hum"
             	let tempHum = databaseRef._path.pieces_[1];
+				// childData is a value from the firebase log
 				const childData = childSnapshot.val();
 				let valueLog = tempHumLog[currentRoom][tempHum];
+
+				// Add childData to valueLog and remove the oldest value if the number of values in the log is greater than GRAPH_LENGTH				
 				valueLog.push(childData);
 				if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
 			});
@@ -133,10 +158,10 @@ for (let i = 0; i < roomList.length; i++) {
 			let currentRoom = databaseRef._path.pieces_[0];
             let tempHum = databaseRef._path.pieces_[1];
 
-			// This adds the lines to tempGraph and humGraph with the data that we in tempHumLog 
+			// This adds the lines to tempGraph and humGraph with the data that is in tempHumLog 
 			if (tempHum == "Temp") {
 				let data = tempHumLog[currentRoom]["Temp"]
-				let dataSet = {
+				let dataset = {
 					fill: false,
 					label: currentRoom,
 					// The color depends on what room the line is displaying
@@ -144,23 +169,24 @@ for (let i = 0; i < roomList.length; i++) {
 					data: data
 				};
 
-				tempgGraph.data.datasets.push(dataSet);
+				// Add the this dataset to the tempGraph and update tempGraph
+				tempgGraph.data.datasets.push(dataset);
 				tempgGraph.update();
 				
-				console.log(dataSet["label"], dataSet["borderColor"], dataSet["data"]);
+				console.log(dataset["label"], dataset["borderColor"], dataset["data"]);
 				updateValue(currentRoom, "Temp", data[data.length - 1]);
 			}
 
 			else {
 				let data = tempHumLog[currentRoom]["Hum"];
-				let dataSet = {
+				let dataset = {
 					fill: false,
 					label: currentRoom,
 					borderColor: colors[roomIndex[currentRoom]],
 					data: data
 				};
 
-				humGraph.data.datasets.push(dataSet);
+				humGraph.data.datasets.push(dataset);
 				humGraph.update();
 
 				console.log(currentRoom, "Hum");
@@ -182,6 +208,7 @@ for (let i = 0; i < roomList.length; i++) {
             let valueLog = tempHumLog[currentRoom][tempHum];
 			valueLog.push(data);
 
+	
 			if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
             console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
 			updateValue(currentRoom, tempHum, data);
