@@ -53,8 +53,8 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 		 scales:{
 			 y:{
 				 ticks:{
-					 callback: function(value,index,values){
-						 return value + "º" + currentUnit[0];
+					 callback: function(value){//a function that adds a degree character after the number on the u axis 
+						 return value + "º" + currentUnit[0];//then it uses the variable currentunit and takes the first character from that string
 					 }
 
 				 }
@@ -64,23 +64,23 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 });
 
 let humGraph = new Chart(document.getElementById("humGraph"), {
-    type: 'line',
+    type: 'line',//defines the graph type to line
     data: {
-    labels: labels,
+    labels: labels,//defines the labels to the constant labels which is all the numbers 1-49
     datasets: [
         
     ]},
     options: {
-		tension: 0.5,
+		tension: 0.5,//sets the tension to 0.5 which makes the graph lines curvy
 		title: {
-			display: true,
+			display: false,//displays a title but display is set to false so this does nothing
 			text: 'luftfuktighet över tid',
 		},
 		scales:{
 			y:{
 				ticks: {
-					callback: function(value,index,values){
-						return value + "%";
+					callback: function(value){//this function sets a percentage charachter after the 
+						return value + "%";//number on the y axis
 					}
 
 				}
@@ -89,7 +89,7 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
     }
 });
 
-const roomIndex = {
+const roomIndex = {//Contains indexes of the different rooms to know what color to put on the different lines
 	"Vardagsrummet": 0,
 	"Vaxthuset": 1,
 	"Hallonrummet": 2,
