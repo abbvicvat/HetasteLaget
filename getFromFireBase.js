@@ -50,7 +50,7 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 			 y:{
 				 ticks:{
 					 callback: function(value){//a function that adds a degree character after the number on the y axis 
-						 return value + "º" + currentUnit[0];//then it uses the variable currentunit and takes the first character from that string
+						 return value.toFixed(1) + "º" + currentUnit[0];//then it uses the variable currentunit and takes the first character from that string
 					 }
 				 }
 			 }
@@ -74,8 +74,8 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
 		scales:{
 			y:{
 				ticks: {
-					callback: function(value){//this function sets a percentage charachter after the 
-						return value + "%";//number on the y axis
+					callback: function(value){//this function sets a percentage charachter after the '1);
+						return value.toFixed(1) + "%";//number on the y axis
 					}
 				}
 			}
@@ -95,7 +95,7 @@ const roomIndex = {//Contains indexes of the different rooms to know what color 
 function convert(value) {
 	if (currentUnit == "Farenheit") value = value * 1.8 + 32
 	else if (currentUnit == "Kelvin") value += 	273.15;
-	return value.toFixed(1);
+	return value;
 }
 
 // updateValue takes 3 arguments, the room, whether it should change the temperature or the humidity and the value
@@ -106,7 +106,7 @@ function updateValue(room, tempHum, value) {
 		suffix = "%";
 	else {
 		suffix = "º" + currentUnit[0];
-		value = convert(value);
+		value = convert(value).toFixed(1);
 	}
 
 	let tempElement = document.getElementById(tempHum + room);
