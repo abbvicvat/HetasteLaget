@@ -3,7 +3,7 @@
     flex-flow: row;
     justify-content: space-around;
     padding-top: 5%;
-    background-color: rgba(0,0,0, 0.7);
+    
     height: auto;
 }
 #graphDiv{
@@ -98,6 +98,7 @@ hr{ /*en tag i HTML som gör en ruta */
 body, html{
     height: 100%;
     margin: 0px;
+    background-color: rgba(0,0,0, 0.7);
 }
 * {
     box-sizing: border-box;
@@ -151,13 +152,13 @@ body, html{
   }
   #bottomtextdiv{
       display: flex;
-      background-color: rgba(0,0,0, 0.7);
       height: 25%;
       margin-bottom: 0%;
       padding-bottom: 0%;
       margin-top: 0%;
       justify-content: start;
       color: white;
+
   }
   .namelist{
       margin-top: 0%;
@@ -168,7 +169,7 @@ body, html{
       display:flex;
       flex-flow: row;
       justify-content: space-evenly;
-      background-color: rgba(0,0,0, 0.7);
+
   }
   #hum1{
       color:#fff
