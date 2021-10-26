@@ -111,7 +111,7 @@ function updateValue(room, tempHum, value) {
     if (tempHum == "Hum") 
 		suffix = "%";
 	else {
-		suffix = " º" + currentUnit[0];
+		suffix = "º" + currentUnit[0];
 		value = convert(value);
 	}
 
