@@ -30,7 +30,7 @@ let tempHumLog = {
 
 // Initalize charts and some values needed for them
 const labels = [];
-for (let i = GRAPH_LENGTH - 1; i >= 0; i--) labels.push(i);
+for (let i = GRAPH_LENGTH; i > 0; i--) labels.push(i);
 const colors = ["red", "green", "black", "#FFCD01", "blue"];
 
 let tempgGraph = new Chart(document.getElementById("tempGraph"), {
