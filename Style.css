@@ -2,7 +2,7 @@
     display:flex;
     flex-flow: row;
     margin-top: 10%;
-    margin-bottom: 10%;
+    margin-bottom: 0%;
 }
 #graphDiv{
     display:flex;
@@ -159,4 +159,11 @@ body, html{
     width: 80%;
     padding: 20px;
     text-align: center;
+  }
+  #bottomtextdiv{
+      background-color: rgba(0,0,0, 0.7);
+      height: 19%;
+  }
+  .bottomtext{
+      color: white;
   }
