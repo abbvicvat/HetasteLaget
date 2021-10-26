@@ -91,6 +91,14 @@ const roomIndex = {//Contains indexes of the different rooms to know what color 
 	"Cafeterian": 4,
 }
 
+const roomLabel = {//Contains indexes of the different rooms to know what color to put on the different lines
+	"Vardagsrummet": "Vardagsrummet",
+	"Vaxthuset": "Växthuset",
+	"Hallonrummet": "Hallonrummet",
+	"Pingisrummet": "Pingisrummet",
+	"Cafeterian": "Cafeterian",
+}
+
 // Takes the value in celcius and converts it to the correct unit
 function convert(value) {
 	if (currentUnit == "Farenheit") value = value * 1.8 + 32
@@ -159,7 +167,7 @@ for (let i = 0; i < roomList.length; i++) {
 				// Build a chart js dataset
 				let dataset = {
 					fill: false, // if fill is true, the area under the line becomes gray
-					label: currentRoom, // What label the dataset should have
+					label: roomLabel[currentRoom], // What label the dataset should have
 					// The color depends on what room the line is displaying
 					borderColor: colors[roomIndex[currentRoom]],
 					data: data // the actual data for our dataset
@@ -178,7 +186,7 @@ for (let i = 0; i < roomList.length; i++) {
 				let data = tempHumLog[currentRoom]["Hum"];
 				let dataset = {
 					fill: false,
-					label: currentRoom,
+					label: roomLabel[currentRoom],
 					borderColor: colors[roomIndex[currentRoom]],
 					data: data
 				};
