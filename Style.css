@@ -10,12 +10,16 @@
     width: 45%;
     background-color: white;
     border: 5px solid rgb(49, 47, 47);
+    padding: 10px;
+    box-shadow: 5px 10px 8px rgb(53, 51, 51);
 }
 #graphDiv1{
     display:flex;
     width: 45%;
     background-color: white;
     border: 5px solid rgb(49, 47, 47);
+    padding: 10px;
+    box-shadow: 5px 10px 8px rgb(53, 51, 51);
 }
 
 #HeadTitle{
