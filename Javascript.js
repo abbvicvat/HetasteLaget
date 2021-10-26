@@ -54,7 +54,12 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 					 }
 				 }
 			 }
-		 }
+		 },
+		 elements: {
+			point:{
+				radius: 1 // Set the radius of the points on the graph to 1
+			}
+		}
     }
 });
 
@@ -78,6 +83,11 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
 						return value.toFixed(1) + "%";//number on the y axis
 					}
 				}
+			}
+		},
+		elements: {
+			point:{
+				radius: 1
 			}
 		}
     }
