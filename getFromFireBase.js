@@ -53,8 +53,8 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 		 scales:{
 			 y:{
 				 ticks:{
-					 callback: function(value,index,values){
-						 return value + " º" + currentUnit[0];
+					 callback: function(value){//a function that adds a degree character after the number on the y axis 
+						 return value + "º" + currentUnit[0];//then it uses the variable currentunit and takes the first character from that string
 					 }
 
 				 }
@@ -64,23 +64,23 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 });
 
 let humGraph = new Chart(document.getElementById("humGraph"), {
-    type: 'line',
+    type: 'line',//defines the graph type to line
     data: {
-    labels: labels,
+    labels: labels,//defines the labels to the constant labels which is all the numbers 1-49
     datasets: [
         
     ]},
     options: {
-		tension: 0.5,
+		tension: 0.5,//sets the tension to 0.5 which makes the graph lines curvy
 		title: {
-			display: true,
+			display: false,//displays a title but display is set to false so this does nothing
 			text: 'luftfuktighet över tid',
 		},
 		scales:{
 			y:{
 				ticks: {
-					callback: function(value,index,values){
-						return value + "%";
+					callback: function(value){//this function sets a percentage charachter after the 
+						return value + "%";//number on the y axis
 					}
 
 				}
@@ -89,7 +89,7 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
     }
 });
 
-const roomIndex = {
+const roomIndex = {//Contains indexes of the different rooms to know what color to put on the different lines
 	"Vardagsrummet": 0,
 	"Vaxthuset": 1,
 	"Hallonrummet": 2,
@@ -111,7 +111,7 @@ function updateValue(room, tempHum, value) {
     if (tempHum == "Hum") 
 		suffix = "%";
 	else {
-		suffix = " º" + currentUnit[0];
+		suffix = "º" + currentUnit[0];
 		value = convert(value);
 	}
 
@@ -120,10 +120,11 @@ function updateValue(room, tempHum, value) {
 	console.log(room, value + suffix);
 }
 
-// updateGraph updates tempGraph or humGraph depending on the value of tempHum and updates the line at position index in that graph to the values in data
+// updateGraph updates tempGraph or humGraph depending on the value of tempHum and updates the line corresponding to the room in that graph to the values in data
 // If tempHum is temperature it also converts the values in data to the correct unit since the temperature data is given in celcius
 function updateGraph(tempHum, index, data) {
 	if (tempHum == "Temp") {
+		// Convert to correct unit
 		let convertedData = [];
 		for (let i = 0; i < data.length; i++) convertedData[i] = convert(data[i]);
 		tempgGraph.data.datasets[index].data = convertedData;
@@ -141,7 +142,7 @@ for (let i = 0; i < roomList.length; i++) {
         
 		let databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Log");
 		onValue(databaseRef, (snapshot) => {
-			// This fills tempHumLog with the values logged in our firebase database
+			// This fills tempHumLog with the values logged in our firebase database so we can display old values
 			snapshot.forEach((childSnapshot) => {
 				let currentRoom = databaseRef._path.pieces_[0];
 				// tempHum is either "temp" or "hum"
@@ -161,12 +162,13 @@ for (let i = 0; i < roomList.length; i++) {
 			// This adds the lines to tempGraph and humGraph with the data that is in tempHumLog 
 			if (tempHum == "Temp") {
 				let data = tempHumLog[currentRoom]["Temp"]
+				// Build a chart js dataset
 				let dataset = {
-					fill: false,
-					label: currentRoom,
+					fill: false, // if fill is true, the area under the line becomes gray
+					label: currentRoom, // What label the dataset should have
 					// The color depends on what room the line is displaying
 					borderColor: colors[roomIndex[currentRoom]],
-					data: data
+					data: data // the actual data for our dataset
 				};
 
 				// Add the this dataset to the tempGraph and update tempGraph
@@ -177,6 +179,7 @@ for (let i = 0; i < roomList.length; i++) {
 				updateValue(currentRoom, "Temp", data[data.length - 1]);
 			}
 
+			// Same thing but for the humidity graph
 			else {
 				let data = tempHumLog[currentRoom]["Hum"];
 				let dataset = {
@@ -193,7 +196,7 @@ for (let i = 0; i < roomList.length; i++) {
 				updateValue(currentRoom, "Hum", data[data.length - 1]);
 			}
 		}, {
-			onlyOnce: true
+			onlyOnce: true // This function should only be called once and not every time a value changes
 		});
 
         databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
@@ -201,18 +204,19 @@ for (let i = 0; i < roomList.length; i++) {
 		// It also updates the graph corresponding to the value which was changed by calling updateGraph
 		// If there are to many values in the log we remove the oldest one
         onValue(databaseRef, (snapshot) => {
-            let currentRoom = databaseRef._path.pieces_[0];
-            let tempHum = databaseRef._path.pieces_[1];
+            let currentRoom = databaseRef._path.pieces_[0]; // databaseRef._path.pieces is a list that contains the room and whether temp if a temperature value was changed, otherwise it contains the room and hum
+            let tempHum = databaseRef._path.pieces_[1]; // We need the room and whether we changed temperature or humidity to know what values we should change
 
-            const data = snapshot.val();
-            let valueLog = tempHumLog[currentRoom][tempHum];
-			valueLog.push(data);
+            const data = snapshot.val(); // The data that was added
+            let valueLog = tempHumLog[currentRoom][tempHum]; // tempHumLog[currentRoom][tempHum] contains our log of values for that specific room and tempHum
+			valueLog.push(data); // Add our new data to our valueLog
 
 	
-			if (valueLog.length > GRAPH_LENGTH) valueLog.shift();
+			if (valueLog.length > GRAPH_LENGTH) valueLog.shift(); // Remove a value from valueLog if it is too large
             console.log(currentRoom, tempHum, data, tempHumLog[currentRoom][tempHum].length);
-			updateValue(currentRoom, tempHum, data);
-			
+			updateValue(currentRoom, tempHum, data); // update the value displayed on the website
+
+			// update the values displayed on the graph
 			if (tempHum == "Temp") {
 				updateGraph("Temp", roomIndex[currentRoom], valueLog);
 				tempgGraph.update();
@@ -240,10 +244,11 @@ function updateTemps() {
 // Add event listeners whcich are called when the buttons to change to different units are pressed
 // The functions changes currentUnit to the Celcius, Farenheit or Kelvin depending on what button was pressed and then calls updateTemps
 document.getElementById("Celsius").onclick = function(event) {
+	// if currentUnit already is Celcius there is no need to change
 	if (currentUnit != "Celcius") {
 		console.log("Change to Celcius");
-		currentUnit = "Celcius";
-		updateTemps();
+		currentUnit = "Celcius"; // set currenUnit to celcius
+		updateTemps(); // update the temperatures displayed
 	}
 }
 

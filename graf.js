@@ -1,5 +1,5 @@
-const lables = [30,25,20,15,10,5,"nu"];
-const labels = ["rum1,rum2,rum3,rum4,rum5"]
+const lables = [30,25,20,15,10,5,"nu"];//the code to when we learned how chart.js worked 
+const labels = ["rum1,rum2,rum3,rum4,rum5"]//and just wanted charts so see how it would look
 
 let tempChart = new Chart(document.getElementById("tempgraf"), {
     type: 'line',
@@ -38,8 +38,7 @@ let tempChart = new Chart(document.getElementById("tempgraf"), {
     },
     options: {
     title: {
-        display: true,
-        text: 'World population per region (in millions)'
+        display: false,
     }
     }
 });
