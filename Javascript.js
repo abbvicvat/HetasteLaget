@@ -153,6 +153,7 @@ for (let i = 0; i < roomList.length; i++) {
         tempHumLog[roomList[i]][tempHumList[j]] = [];
         
 		let databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Log");
+		// This function is called once for each log of values in our database
 		onValue(databaseRef, (snapshot) => {
 			// This fills tempHumLog with the values logged in our firebase database so we can display old values
 			snapshot.forEach((childSnapshot) => {
@@ -214,7 +215,6 @@ for (let i = 0; i < roomList.length; i++) {
         databaseRef = ref(database, roomList[i] + "/" + tempHumList[j] + "/Current");
 		// This function is called when a new value is pushed to the database, adds that value to tempHumLog and updates the value displayed by calling updateValue
 		// It also updates the graph corresponding to the value which was changed by calling updateGraph
-		// If there are to many values in the log we remove the oldest one
         onValue(databaseRef, (snapshot) => {
             let currentRoom = databaseRef._path.pieces_[0]; // databaseRef._path.pieces is a list that contains the room and whether temp if a temperature value was changed, otherwise it contains the room and hum
             let tempHum = databaseRef._path.pieces_[1]; // We need the room and whether we changed temperature or humidity to know what values we should change
