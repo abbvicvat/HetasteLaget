@@ -9,11 +9,13 @@
     display:flex;
     width: 45%;
     background-color: white;
+    border: 5px solid rgb(49, 47, 47);
 }
 #graphDiv1{
     display:flex;
     width: 45%;
     background-color: white;
+    border: 5px solid rgb(49, 47, 47);
 }
 
 #HeadTitle{
