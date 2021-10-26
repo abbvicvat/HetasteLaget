@@ -1,12 +1,8 @@
-// Import the functions you need from the SDKs you need
+// Import the functions that we need to get values from the firebase database
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyA8EDmKJXu6tvOErFAZfI-DeFscR5DpkXs",
   authDomain: "temperatur-1827b.firebaseapp.com",
@@ -56,7 +52,6 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 					 callback: function(value){//a function that adds a degree character after the number on the y axis 
 						 return value + "º" + currentUnit[0];//then it uses the variable currentunit and takes the first character from that string
 					 }
-
 				 }
 			 }
 		 }
@@ -82,7 +77,6 @@ let humGraph = new Chart(document.getElementById("humGraph"), {
 					callback: function(value){//this function sets a percentage charachter after the 
 						return value + "%";//number on the y axis
 					}
-
 				}
 			}
 		}
