@@ -149,15 +149,29 @@ body, html{
     text-align: center;
   }
   #bottomtextdiv{
+      display: flex;
       background-color: rgba(0,0,0, 0.7);
       height: 25%;
       margin-bottom: 0%;
       padding-bottom: 0%;
       margin-top: 0%;
+      justify-content: space-evenly;
+      color: white;
   }
   .namelist{
       margin-top: 0%;
       padding-top: 1%;
-      color: white;
       height: auto;
+  }
+  #temphum{
+      display:flex;
+      flex-flow: row;
+      justify-content: space-evenly;
+      background-color: rgba(0,0,0, 0.7);
+  }
+  #hum1{
+      color:#fff
+  }
+  #temp1{
+      color: white;
   }
