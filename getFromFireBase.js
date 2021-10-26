@@ -247,8 +247,8 @@ document.getElementById("Celsius").onclick = function(event) {
 	// if currentUnit already is Celcius there is no need to change
 	if (currentUnit != "Celcius") {
 		console.log("Change to Celcius");
-		currentUnit = "Celcius";
-		updateTemps();
+		currentUnit = "Celcius"; // set currenUnit to celcius
+		updateTemps(); // update the temperatures displayed
 	}
 }
 
