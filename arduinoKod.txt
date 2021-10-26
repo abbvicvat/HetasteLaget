@@ -18,7 +18,6 @@ const String tempPath = "/Temp"; // En konstatnt variabel som innehåller vägen
 const String humPath = "/Hum"; // En konstatnt variabel som innehåller vägen luft fuktigheten kommer skickas till i firebase
 const String currentPath = "/Current"; // Definerar en konstant string på vägen där den senaste uppdaterade datan kommer visas 
 const String logPath = "/Log";  // Definerar en konstant variabel väg som kommer där all data kommer sparas
-const String updatedPath = "/Updated";    // En konstant string som innehåller vägen där tidpunkten data skickats sparas
 
 float SensorTemp; // Definerar en float som sparar den nuvarande temperaturen
 float SensorHum; // Definerar en float som sparar den nuvarande luft fuktigheten
@@ -34,13 +33,13 @@ void setup() { // Denna funktion körs i början av programmet innan loopen
         Serial.print("."); // printar en . i serial monitorn varje 0,3 sekunder för att feedback att WiFi'et höller på att connecta
         delay(300);       //    ^
     }
-    Serial.println();// printar en ny linje i serial monitorn
+    Serial.println();// printar en ny linje i serial monitorn för att inte skriva följande på samma rad som prikarna
     Serial.print("Connected with IP: "); // Printar att WiFi'et har connectat
     Serial.println(WiFi.localIP()); // Skriver ut den locala IP adressen
     Serial.println(); // Skriver ut en ny linje
 
     Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); // Startar FireBase och skickar med var den ska skickas med HOST och AUTH för att veta att det är du som är ägare
-    Firebase.reconnectWiFi(true); // Reconnnectar WiFi'et med Firebase (kolla om det är det den gör och skriv bättre!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+    Firebase.reconnectWiFi(true);  // Reconnnectar WiFi'et med Firebase nu när WiFi'et och firebase är igång
 
   delay(5000); // Väntar 5000 milisekunder eller 5 sekunder för att vara säker att fire base och wifi'et är kopplade innan vi börjar skicka information
 }
@@ -91,15 +90,6 @@ void sendTempToFireBase(){ // En funktion som skickar temperaturen till FireBase
   {
       Serial.println("Could not add temp to logger");// Printar att temperaturen inte kunnde loggas, underlättar vid felsökning
   }
-  if (Firebase.pushTimestamp(firebaseData1, rumPath + tempPath + updatedPath ))
-  // Skickar tidpunkten till en designerad väg med FireBase funktionen puchTimestamp som lägger till det nya värdet i en lista
-  { // Ifall uppskickningen lyckas körs detta
-      Serial.println("Time updated"); // Skriver att tiden är updaterad vilket underlättar ifall man felsöker
-  }
-  else // ifall uppskickningen misslyckas körs detta
-  {
-      Serial.println("Could not set time"); // Printar att tiden inte kunde updateras 
-  }
 }
 
 void sendHumToFireBase(){ // En funktion som skickar luft fuktigheten till FireBase
@@ -120,13 +110,5 @@ void sendHumToFireBase(){ // En funktion som skickar luft fuktigheten till FireB
   else// Om det inte lycakdes körs detta
   {
       Serial.println("Could not add hum to logger"); // Printar att luft fuktigheten inde kunde loggas
-  }
-        if (Firebase.pushTimestamp(firebaseData1, rumPath + humPath + updatedPath ))
-  { // Skickar tidpunkten då datan skickades till en lista med Firebase funktionen pushTimestamp. Detta skickas till vägen rumPath + humPath + updatedPath
-      Serial.println("Time updated"); // skriver att tiden blev uppdaterad ifall datan lyckades bli uppskickad
-  }
-  else // Detta körs om datan inte lyckades bli uppskickad
-  {
-      Serial.println("Could not set time"); // Skriver att tiden inte kunde bli uppdaterad. Detta gör det lättare att hitta vad som är fel om något inte fungerar
   }
 }
