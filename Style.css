@@ -1,11 +1,16 @@
 #graphDivContainer {
     display:flex;
     flex-flow: row;
-    margin-bottom: 50px;
+    margin-top: 10%;
+    margin-bottom: 10%;
 }
-.graphDiv{
+#graphDiv{
     display:flex;
-    width:50%;
+    width: 50%;
+}
+#graphDiv1{
+    display:flex;
+    width: 50%;
 }
 
 #HeadTitle{
