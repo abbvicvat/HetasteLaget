@@ -1,16 +1,21 @@
 #graphDivContainer {
     display:flex;
     flex-flow: row;
-    margin-top: 10%;
+    justify-content: space-around;
+    margin-top: 0%;
     margin-bottom: 0%;
+    background-color: rgba(0,0,0, 0.7);
+    height: auto;
 }
 #graphDiv{
     display:flex;
-    width: 50%;
+    width: 45%;
+    background-color: white;
 }
 #graphDiv1{
     display:flex;
-    width: 50%;
+    width: 45%;
+    background-color: white;
 }
 
 #HeadTitle{
@@ -149,8 +154,10 @@ body, html{
       height: 25%;
       margin-bottom: 0%;
       padding-bottom: 0%;
+      margin-top: 0%;
   }
   .namelist{
+      margin-top: 0%;
       padding-top: 1%;
       color: white;
       height: auto;
