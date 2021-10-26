@@ -57,7 +57,7 @@ let tempgGraph = new Chart(document.getElementById("tempGraph"), {
 		 },
 		 elements: {
 			point:{
-				radius: 1
+				radius: 1 // Set the radius of a point to 1 to make them smaller and the graph smoother
 		 	}
 		}
     }
